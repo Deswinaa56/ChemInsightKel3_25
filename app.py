@@ -195,6 +195,16 @@ elif menu == "📂 Upload CSV":
 
     st.title("📂 Upload Data CSV")
 
+    jenis = st.selectbox(
+        "Pilih Jenis Analisis",
+        [
+            "Perhitungan pH",
+            "Molaritas",
+            "Pengenceran",
+            "Titrasi"
+        ]
+    )
+
     file = st.file_uploader(
         "Upload File CSV",
         type=["csv"]
@@ -202,14 +212,64 @@ elif menu == "📂 Upload CSV":
 
     if file is not None:
 
-        data = pd.read_csv(file)
+        data = pd.read_csv(file, sep=';')
 
-        st.write("### Data Laboratorium")
-
+        st.write("### Data Awal")
         st.dataframe(data)
 
-        st.write("### Statistik Data")
+        # ======================
+        # pH
+        # ======================
 
+        if jenis == "Perhitungan pH":
+
+            data["pH"] = -data["Konsentrasi_H+"].apply(math.log10)
+
+            st.write("### Hasil Perhitungan pH")
+            st.dataframe(data)
+
+        # ======================
+        # MOLARITAS
+        # ======================
+
+        elif jenis == "Molaritas":
+
+            data["Molaritas"] = (
+                (data["Massa_g"] / data["Mr"])
+                /
+                (data["Volume_mL"] / 1000)
+            )
+
+            st.write("### Hasil Perhitungan Molaritas")
+            st.dataframe(data)
+
+        # ======================
+        # PENGENCERAN
+        # ======================
+
+        elif jenis == "Pengenceran":
+
+            data["M2"] = (
+                data["M1"] * data["V1_mL"]
+            ) / data["V2_mL"]
+
+            st.write("### Hasil Pengenceran")
+            st.dataframe(data)
+
+        # ======================
+        # TITRASI
+        # ======================
+
+        elif jenis == "Titrasi":
+
+            data["M2"] = (
+                data["M1"] * data["V1_mL"]
+            ) / data["V2_mL"]
+
+            st.write("### Hasil Analisis Titrasi")
+            st.dataframe(data)
+
+        st.write("### Statistik Data")
         st.write(data.describe())
 
 # =========================
