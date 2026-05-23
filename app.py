@@ -174,19 +174,47 @@ elif menu == "📈 Grafik Laboratorium":
 
     st.title("📈 Grafik Laboratorium")
 
-    x = [1, 2, 3, 4, 5]
-    y = [2, 4, 6, 8, 10]
+    file = st.file_uploader(
+        "Upload File CSV untuk Grafik",
+        type=["csv"]
+    )
 
-    fig, ax = plt.subplots()
+    if file is not None:
 
-    ax.plot(x, y, marker='o')
+        data = pd.read_csv(file, sep=';')
 
-    ax.set_xlabel("Waktu")
+        st.write("### Data CSV")
+        st.dataframe(data)
 
-    ax.set_ylabel("Konsentrasi")
+        kolom_x = st.selectbox(
+            "Pilih Sumbu X",
+            data.columns
+        )
 
-    st.pyplot(fig)
+        kolom_y = st.selectbox(
+            "Pilih Sumbu Y",
+            data.columns
+        )
 
+        # ubah koma menjadi titik
+        data[kolom_y] = pd.to_numeric(
+            data[kolom_y].astype(str).str.replace(',', '.'),
+            errors='coerce'
+        )
+
+        fig, ax = plt.subplots()
+
+        ax.plot(
+            data[kolom_x],
+            data[kolom_y],
+            marker='o'
+        )
+
+        ax.set_xlabel(kolom_x)
+        ax.set_ylabel(kolom_y)
+
+        st.pyplot(fig)
+        
 # =========================
 # UPLOAD CSV
 # =========================
