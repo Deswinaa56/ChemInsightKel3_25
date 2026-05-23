@@ -223,7 +223,10 @@ elif menu == "📂 Upload CSV":
 
         if jenis == "Perhitungan pH":
 
-            data["pH"] = -data["Konsentrasi_H+"].apply(math.log10)
+            data["pH"] = -pd.to_numeric(
+    data["Konsentrasi_H+"].astype(str).str.replace(',', '.'),
+    errors='coerce'
+).apply(math.log10)
 
             st.write("### Hasil Perhitungan pH")
             st.dataframe(data)
